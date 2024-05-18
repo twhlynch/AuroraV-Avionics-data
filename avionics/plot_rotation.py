@@ -121,10 +121,6 @@ def calculate_quat(gyro, dt):
         quats.append(quaternion_normalize(q_w))
 
     quats = [(q.x, q.y, q.z, q.r) for q in quats]
-    np.savetxt(
-        './csv/quaternion_estimate.csv',
-        quats, delimiter=',', header="x,y,z,w"
-    )
     return quats
 
 
@@ -135,6 +131,7 @@ def calculate_quat(gyro, dt):
 def visualise(quats, start_time, duration, dt, typestr):
 
     t = [dt*i-start_time for i in range(len(quats))]
+    split = typestr.split(' ')
 
     plt.figure()
     plt.plot(t[int(start_time/dt):int(duration/dt)],
@@ -142,20 +139,22 @@ def visualise(quats, start_time, duration, dt, typestr):
     plt.xlabel("Time (s)")
     plt.title(f"Quaternion {typestr}")
     plt.legend(["x", "y", "z", "w"], loc="upper left")
-    plt.savefig(f"./plot/state/attitude/quat_{typestr}.png")
+    plt.savefig(f"./plot/state/attitude/quat_{split[0]}.png")
 
     # EULER ANGLE
-    plt.figure()
-    plt.plot(t[int(start_time/dt):int(duration/dt)],
-             [
+    angles = [
         Rotation.from_quat(q).as_euler("xyz", degrees=True)
         for q in quats[int(start_time/dt):int(duration/dt)]
-    ])
+    ]
+    plt.figure()
+    plt.plot(t[int(start_time/dt):int(duration/dt)], [a[0] for a in angles])
+    plt.plot(t[int(start_time/dt):int(duration/dt)], [a[1] for a in angles])
+    plt.plot(t[int(start_time/dt):int(duration/dt)], [a[2] for a in angles])
     plt.xlabel("Time (s)")
     plt.ylabel("Angle (degrees)")
     plt.title(f"Euler angle {typestr}")
     plt.legend(["Roll", "Pitch", "Yaw"], loc="lower right")
-    plt.savefig(f"./plot/state/attitude/euler_{typestr}.png")
+    plt.savefig(f"./plot/state/attitude/euler_{split[0]}.png")
     plt.show()
 
 
@@ -222,6 +221,8 @@ if __name__ == '__main__':
     ax_BR = args.axisBR[:3]
     scale_x, scale_y, scale_z = map(
         float, args.axisBR[4:-1].split(','))    # Yuck
+    print(scale_x, scale_y, scale_z)
+    print(ax_BR)
 
     gyro_BR = [
         [scale_x * x for x in data_BR[f'Gyro_{ax_BR[0]}']],
@@ -241,19 +242,33 @@ if __name__ == '__main__':
     ###########################################################################
 
     # Visualise AV estimates
+    # -----------------------------------------------------------
     start_AV, duration_AV = time_ranges['AV']
     freq = int(args.freq.split(':')[0])
     dt = 1/freq
-    visualise(calculate_quat(gyro_AV, dt), start_AV,
-              duration_AV, dt, "AV estimates")
+
+    quats_AV = calculate_quat(gyro_AV, dt)
+    np.savetxt(
+        f'./csv/{directory}/quaternion_estimate_AV.csv',
+        quats_AV, delimiter=',', header="x,y,z,w", comments=""
+    )
+    visualise(quats_AV, start_AV, duration_AV, dt, "AV estimates")
 
     # Visualise BR estimates
+    # -----------------------------------------------------------
     start_BR, duration_BR = time_ranges['BR']
     freq = int(args.freq.split(':')[1])
     dt = 1/freq
-    visualise(calculate_quat(gyro_BR, dt), start_BR,
-              duration_BR, dt, "BR estimates")
 
+    quats_BR = calculate_quat(gyro_BR, dt)
+    np.savetxt(
+        f'./csv/{directory}/quaternion_estimate_BR.csv',
+        quats_BR, delimiter=',', header="x,y,z,w", comments=""
+    )
+    visualise(quats_BR, start_BR, duration_BR, dt, "BR estimates")
+
+    # Visualise BR truth
+    # -----------------------------------------------------------
     # Manually rotating BR truth quaternions to global frame (ew)
     quats_truth = list(zip(
         [-x for x in data_BR['Quat_4']],
@@ -261,5 +276,4 @@ if __name__ == '__main__':
         [z for z in data_BR['Quat_2']],
         [w for w in data_BR['Quat_1']],
     ))
-    # Visualise BR truth
     visualise(quats_truth, start_BR, duration_BR, dt, "truth")

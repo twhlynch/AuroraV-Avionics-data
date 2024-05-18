@@ -30,10 +30,12 @@ accel_br = [
     [9.81 * x for x in data_br['Accel_Z']]
 ]
 
+cosines = data["Tilt_Cosine"]
+
 baro = [x for x in data_br_l["Baro_Altitude_AGL_(feet)"]]
 baro = np.repeat(baro[100:], 5)
 
-vel_br = list(np.repeat(data_br_l["Velocity_Up"][100:], 5)[0:data_count])
+vel_br = list(np.repeat(data_br_l["Velocity_Up"], 5)[0:data_count])
 
 # Lists to store estimated states and covariances
 x_est_list = []
@@ -49,9 +51,9 @@ def kalman_filter(q0, q1, q2, r0, r1, flag=False):
     # Measurement noise covariance matrix (sensor noise)
     R = np.diag([r0, r1])
     # Initial state (altitude, velocity, acceleration)
-    x = np.array([[0.0], [73.2], [9.81]])
+    x = np.array([[0.0], [0.0], [0.0]])
     # Initial covariance matrix (uncertainty in initial state)
-    P = np.diag([0.01, 10.0, 0.01])
+    P = np.diag([1, 0.1, 100])
 
     # State transition matrix (constant acceleration model)
     F = np.array([
@@ -74,7 +76,9 @@ def kalman_filter(q0, q1, q2, r0, r1, flag=False):
 
             # Measurement update
             # Altitude and acceleration measurements
-            z = np.array([[baro[i]], [accel[0][i]+9.81]])
+            z = np.array(
+                [[baro[i]], [3.28*(cosines[i] * accel[0][i]-9.81)]])
+
             y = z - H @ x_pred
             S = H @ P_pred @ H.T + R
             K = P_pred @ H.T @ np.linalg.inv(S)
@@ -87,14 +91,14 @@ def kalman_filter(q0, q1, q2, r0, r1, flag=False):
 
         if flag:
             return x_est_list
-        return -root_mean_squared_error(vel_br[0:2400], [x[1][0] for x in x_est_list[0:2400]])
+        return -root_mean_squared_error(vel_br[2890:], [x[1][0] for x in x_est_list[2890:]])
     except:
         return -1000
 
 
 pbounds = {
-    'q0': (0, 1000), 'q1': (0, 1000), 'q2': (0, 1000),
-    'r0': (0, 1000), 'r1': (0, 1000)
+    'q0': (0.001, 100), 'q1': (0.001, 100), 'q2': (0.001, 100),
+    'r0': (0.001, 100), 'r1': (0.001, 100)
 }
 
 optimizer = BayesianOptimization(
@@ -120,7 +124,7 @@ for k, v in p.items():
     p[k] = round(v, 2)
 
 plt.plot(t, estimated_velocities)
-plt.plot(t, vel_br)
+plt.plot(t_br_l, data_br_l["Velocity_Up"])
 plt.xlabel("Time (s)")
 plt.ylabel("Velocity (m/s)")
 plt.legend(["Calculated estimate", "BR ground truth"])

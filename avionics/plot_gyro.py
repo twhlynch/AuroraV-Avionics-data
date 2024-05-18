@@ -37,6 +37,7 @@ plt.ylabel('X-axis rotational velocity (m/s)')
 plt.legend(["A1 Avionics", "Blue Raven"])
 plt.savefig("./plot/gyro/Gyro_X.png")
 
+plt.show()
 plt.figure()
 plt.plot(t, gyro[0:int(total_time / dt), 1])
 plt.plot(t_br, gyro_br[0:int(total_time / dt_br), 1])
