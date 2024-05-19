@@ -1,6 +1,10 @@
+from ctypes import CDLL, c_double
+import matplotlib.pyplot as plt
 import argparse
 import struct
 
+BME280_comp = CDLL("./BME280_comp.so")
+BME280_comp.compensate_T.restype = c_double
 
 ###########################################################################
 #                               CLI ARGS                                  #
@@ -52,6 +56,8 @@ elif args.coeff_file:
 else:
     ...
 
+print(f"python coeff\t{dig_T1} {dig_T2} {dig_T3}")
+
 ###########################################################################
 #                              CALCULATIONS                               #
 ###########################################################################
@@ -60,13 +66,18 @@ press, temp = [], []
 with open(args.data_file, mode='rb') as file:
     while d := file.read(6):
         # Read in data as little endian unsigned 16-bit values
-        temp.append(struct.unpack('<H', d[:2])[0])      # First two bytes are temp
-        press.append(struct.unpack('<H', d[2:4])[0])    # Second two are pressure
+        # First two bytes are temp
+        temp.append(struct.unpack('<H', d[:2])[0])
+        # Second two are pressure
+        press.append(struct.unpack('<H', d[2:4])[0])
 
 # Calculate temperature from ADC readings and temperature coefficients
+press_comp, temp_comp = [], []
 for adc_T in temp:
-    var1 = ((((adc_T >> 3) - (dig_T1 << 1))) * (dig_T2)) >> 11
-    var2 = (((((adc_T >> 4) - (dig_T1)) * ((adc_T >> 4) - (dig_T1)))
-            >> 12) * (dig_T3)) >> 14
-    T = round(0.01 * (((var1 + var2) * 5 + 128) >> 8), 2)
-    print(T)
+    T = BME280_comp.compensate_T(adc_T, dig_T1, dig_T2, dig_T3)
+    temp_comp.append(round(T, 3))
+    print(float(T))
+
+
+plt.plot(temp_comp)
+plt.show()
