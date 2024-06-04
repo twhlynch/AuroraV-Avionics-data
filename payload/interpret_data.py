@@ -5,6 +5,7 @@ import struct
 
 BME280_comp = CDLL("./BME280_comp.so")
 BME280_comp.compensate_T.restype = c_double
+BME280_comp.compensate_P.restype = c_double
 
 ###########################################################################
 #                               CLI ARGS                                  #
@@ -47,9 +48,12 @@ elif args.coeff_file:
     # Extract from raw coefficient binary
     try:
         with open(args.coeff_file, mode='rb') as file:
-            dig_T1, = struct.unpack('<H', file.read(2))
-            dig_T2, = struct.unpack('<h', file.read(2))
-            dig_T3, = struct.unpack('<h', file.read(2))
+            # Temperature coefficients
+            dig_T1, dig_T2, dig_T3 = struct.unpack('<HHH', file.read(6))
+            # Pressure coefficients
+            dig_P1, dig_P2, dig_P3 = struct.unpack('<HHH', file.read(6))
+            dig_P4, dig_P5, dig_P6 = struct.unpack('<HHH', file.read(6))
+            dig_P7, dig_P8, dig_P9 = struct.unpack('<HHH', file.read(6))
     except (FileNotFoundError) as e:
         print(f"Error: Could not open file: {e}")
         exit(1)
@@ -73,11 +77,24 @@ with open(args.data_file, mode='rb') as file:
 
 # Calculate temperature from ADC readings and temperature coefficients
 press_comp, temp_comp = [], []
-for adc_T in temp:
+for adc_T, adc_P in list(zip(temp, press)):
     T = BME280_comp.compensate_T(adc_T, dig_T1, dig_T2, dig_T3)
+    P = BME280_comp.compensate_P(
+        adc_P,
+        dig_P1, dig_P2, dig_P3,
+        dig_P4, dig_P5, dig_P6,
+        dig_P7, dig_P8, dig_P9
+    )
     temp_comp.append(round(T, 3))
-    print(float(T))
-
+    press_comp.append(round(P, 3))
+    print(P)
 
 plt.plot(temp_comp)
+plt.xlabel("Sample No.")
+plt.ylabel("Temperature (c)")
+
+plt.figure()
+plt.plot(press_comp)
+plt.xlabel("Sample No.")
+plt.ylabel("Pressure (kPa)")
 plt.show()
