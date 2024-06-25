@@ -6,6 +6,7 @@
 int32_t t_fine;
 double compensate_T(int32_t adc_T, uint16_t dig_T1, int16_t dig_T2, int16_t dig_T3) {
   double var1, var2, T;
+  adc_T = adc_T << 4;
   var1 = (((double)adc_T)/16384.0 - ((double)dig_T1)/1024.0) * ((double)dig_T2);
   var2 = ((((double)adc_T)/131072.0 - ((double)dig_T1)/8192.0) * (((double)adc_T)/131072.0 - ((double) dig_T1)/8192.0)) * ((double)dig_T3);
   t_fine = (int32_t)(var1 + var2);
@@ -21,6 +22,7 @@ double compensate_P(
   int16_t dig_P7, int16_t dig_P8, int16_t dig_P9
 ) {
   double var1, var2, p;
+  adc_P = adc_P << 4;
   var1 = ((double)t_fine/2.0) - 64000.0;
   var2 = var1 * var1 * ((double)dig_P6) / 32768.0;
   var2 = var2 + var1 * ((double)dig_P5) * 2.0;
@@ -36,4 +38,24 @@ double compensate_P(
   var2 = p * ((double)dig_P8) / 32768.0;
   p = p + (var1 + var2 + ((double)dig_P7)) / 16.0;
   return p;
+}
+
+// Returns humidity in %rH as as double. Output value of “46.332” represents 46.332 %rH
+double compensate_H (
+  uint32_t adc_H, 
+  uint8_t dig_H1, int16_t dig_H2, uint8_t dig_H3, 
+  int16_t dig_H4, int16_t dig_H5, int8_t dig_H6
+) {
+  double var_H;
+  var_H = (((double)t_fine) - 76800.0);
+  var_H = (adc_H - (((double)dig_H4) * 64.0 + ((double)dig_H5) / 16384.0 *
+  var_H)) * (((double)dig_H2) / 65536.0 * (1.0 + ((double)dig_H6) /
+  67108864.0 * var_H *
+  (1.0 + ((double)dig_H3) / 67108864.0 * var_H)));
+  var_H = var_H * (1.0 - ((double)dig_H1) * var_H / 524288.0);
+  if (var_H > 100.0)
+    var_H = 100.0;
+  else if (var_H < 0.0)
+    var_H = 0.0;
+  return var_H;
 }
