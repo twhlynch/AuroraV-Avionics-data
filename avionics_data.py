@@ -9,6 +9,7 @@ from src.graphs.acceleration_graph import AccelerationGraph
 from src.graphs.velocity_graph import VelocityGraph
 from src.graphs.tilt_graph import TiltGraph
 from src.graphs.gyro_graph import GyroGraph
+from src.graphs.kalman_graph import KalmanGraph
 
 def get_data():
 	"""
@@ -26,6 +27,7 @@ def get_data():
 		pd.read_csv('./data_csv/data_raven_lowres.csv'),
 		pd.read_csv('./data_csv/quaternion_estimate_AV.csv'),
 		pd.read_csv('./data_csv/quaternion_estimate_BR.csv'),
+		pd.read_csv('./data_csv/data_highres_2.csv')
 	]
 
 
@@ -39,6 +41,7 @@ def generate():
     data[3].to_csv("data_raven_lowres.csv", index=False)
     data[4].to_csv("quaternion_estimate_AV.csv", index=False)
     data[5].to_csv("quaternion_estimate_BR.csv", index=False)
+    data[6].to_csv("data_highres_2.csv", index=False)
 
 # UI
 class App(tk.Tk):
@@ -46,6 +49,7 @@ class App(tk.Tk):
 		super().__init__()
 
 		self.title("Data Visualisation")
+		self.protocol("WM_DELETE_WINDOW", self.on_close)
 		self.notebook = ttk.Notebook(self)
 		self.notebook.pack(fill=tk.BOTH, expand=1)
 
@@ -55,6 +59,11 @@ class App(tk.Tk):
 		self.tab_velocity = VelocityGraph(self.notebook, data)
 		self.tab_tilt = TiltGraph(self.notebook, data)
 		self.tab_gyro = GyroGraph(self.notebook, data)
+		self.tab_kalman = KalmanGraph(self.notebook, data)
+
+	def on_close(self):
+		self.destroy()
+		self.quit()
 
 def visualise():
 	app = App()
