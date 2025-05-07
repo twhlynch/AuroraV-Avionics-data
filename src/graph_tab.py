@@ -19,7 +19,7 @@ class GraphTab(ttk.Frame):
 		self.setup()
 
 		parent.add(self, text=self.title)
-		self.fig, self.ax = plt.subplots()
+		self.fig, self.ax = plt.subplots(figsize=(6, 4), dpi=80)
 
 		self.graph()
 
