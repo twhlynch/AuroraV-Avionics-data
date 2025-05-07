@@ -1,9 +1,7 @@
 from math import cos, acos, pi
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from ..lib.math import Quaternion, Vector3
 
+from ..lib.math import Quaternion, Vector3
 from ..graph_tab import GraphTab
 
 

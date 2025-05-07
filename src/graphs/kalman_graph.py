@@ -1,8 +1,6 @@
 from bayes_opt import BayesianOptimization
 from sklearn.metrics import root_mean_squared_error
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from ..graph_tab import GraphTab
 

@@ -1,4 +1,5 @@
 import matplotlib.gridspec as gridspec
+
 from ..lib.math import Quaternion, Vector3
 from ..graph_tab import GraphTab
 

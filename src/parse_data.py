@@ -1,5 +1,7 @@
-from .lib.math import Quaternion, Vector3
 import pandas as pd
+
+from .lib.math import Quaternion, Vector3
+
 
 def parse_data(data: list, args: dict):
     """

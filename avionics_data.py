@@ -1,9 +1,7 @@
-import sys
 import argparse
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk
-from pandas import DataFrame
 
 from src.graphs.acceleration_graph import AccelerationGraph
 from src.graphs.velocity_graph import VelocityGraph
@@ -12,8 +10,8 @@ from src.graphs.gyro_graph import GyroGraph
 from src.graphs.gyro_state_graph import GyroStateGraph
 from src.graphs.rotation_graph import RotationGraph
 from src.graphs.kalman_graph import KalmanGraph
-
 from src.parse_data import parse_data
+
 
 def get_data(args: dict):
 	"""
