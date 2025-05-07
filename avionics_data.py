@@ -9,6 +9,7 @@ from src.graphs.acceleration_graph import AccelerationGraph
 from src.graphs.velocity_graph import VelocityGraph
 from src.graphs.tilt_graph import TiltGraph
 from src.graphs.gyro_graph import GyroGraph
+from src.graphs.gyro_state_graph import GyroStateGraph
 from src.graphs.rotation_graph import RotationGraph
 from src.graphs.kalman_graph import KalmanGraph
 
@@ -64,6 +65,7 @@ class App(tk.Tk):
 			VelocityGraph(self.notebook, data, args),
 			TiltGraph(self.notebook, data, args),
 			GyroGraph(self.notebook, data, args),
+			GyroStateGraph(self.notebook, data, args),
 			RotationGraph(self.notebook, data, args),
 			KalmanGraph(self.notebook, data, args),
 		]
