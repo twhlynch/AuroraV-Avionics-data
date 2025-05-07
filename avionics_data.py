@@ -1,5 +1,5 @@
 import sys
-import os
+import argparse
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk
@@ -12,7 +12,7 @@ from src.graphs.gyro_graph import GyroGraph
 from src.graphs.rotation_graph import RotationGraph
 from src.graphs.kalman_graph import KalmanGraph
 
-def get_data():
+def get_data(args: dict):
 	"""
 	Get data from binary files
 
@@ -33,8 +33,8 @@ def get_data():
 
 
 # CLI
-def generate():
-    data = get_data()
+def generate(args):
+    data = get_data(args)
 
     data[0].to_csv("data_highres.csv", index=False)
     data[1].to_csv("data_raven_highres.csv", index=False)
@@ -46,7 +46,7 @@ def generate():
 
 # UI
 class App(tk.Tk):
-	def __init__(self):
+	def __init__(self, args: dict):
 		super().__init__()
 
 		self.title("Data Visualisation")
@@ -54,29 +54,50 @@ class App(tk.Tk):
 		self.notebook = ttk.Notebook(self)
 		self.notebook.pack(fill=tk.BOTH, expand=1)
 
-		data = get_data()
+		data = get_data(args)
 
-		self.tab_acceleration = AccelerationGraph(self.notebook, data)
-		self.tab_velocity = VelocityGraph(self.notebook, data)
-		self.tab_tilt = TiltGraph(self.notebook, data)
-		self.tab_gyro = GyroGraph(self.notebook, data)
-		self.tab_rotation = RotationGraph(self.notebook, data)
-		self.tab_kalman = KalmanGraph(self.notebook, data)
+		self.tabs = [
+			AccelerationGraph(self.notebook, data, args),
+			VelocityGraph(self.notebook, data, args),
+			TiltGraph(self.notebook, data, args),
+			GyroGraph(self.notebook, data, args),
+			RotationGraph(self.notebook, data, args),
+			KalmanGraph(self.notebook, data, args),
+		]
 
 	def on_close(self):
 		self.destroy()
 		self.quit()
 
-def visualise():
-	app = App()
+def visualise(args: dict):
+	app = App(args)
 	app.mainloop()
 
 
 def main():
-	if '--csv' in sys.argv:
-		generate()
+	if False: # currently using test input
+		parser = argparse.ArgumentParser(description="Avionics Data Visualisation and CSV Generation")
+		parser.add_argument('--csv', action='store_true', 
+			help="Generate CSV files from data")
+		parser.add_argument('data', type=str,
+			help='Path to the binary file to extract data from')
+		args = vars(parser.parse_args())
+
+	args = {
+		"csv": False,
+		"data": "data.bin",
+
+		# rotation
+		"axisAV": "xyz[1,1,1]",
+		"axisBR": "xyz[1,1,1]",
+		"time": ["AV:0:5","BR:10:15"],
+		"freq": "1:1",
+	}
+
+	if args['csv']:
+		generate(args)
 	else:
-		visualise()
+		visualise(args)
 
 
 if __name__ == "__main__":

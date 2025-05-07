@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 
 
 class GraphTab(ttk.Frame):
-	def __init__(self, parent: ttk.Notebook, data: list):
+	def __init__(self, parent: ttk.Notebook, data: list, args: dict):
 		"""
 
 		Args:
@@ -15,6 +15,7 @@ class GraphTab(ttk.Frame):
 		super().__init__(parent)
 		self.title = "Undefined"
 		self.data = data
+		self.args = args
 
 		self.setup()
 
