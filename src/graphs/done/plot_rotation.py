@@ -1,8 +1,6 @@
-from scipy.spatial.transform import Rotation
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import math
 import argparse
 from lib.math import Quaternion, Vector3
 
@@ -49,8 +47,7 @@ def visualise(quats, start_time, duration, dt, typestr):
 
     # EULER ANGLE
     angles = [
-        Rotation.from_quat(q).as_euler("xyz", degrees=True)
-        for q in quats[int(start_time/dt):int(duration/dt)]
+        q.as_euler(degrees=True).__array__() for q in quats[int(start_time/dt):int(duration/dt)]
     ]
     plt.figure()
     plt.plot(t[int(start_time/dt):int(duration/dt)], [a[0] for a in angles])
