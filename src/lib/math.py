@@ -16,6 +16,9 @@ class Quaternion:
     def __array__(self) -> list:
         return [self.x, self.y, self.z, self.w]
 
+    def as_array(self) -> list:
+        return self.__array__()
+
     def __iter__(self):
         for val in self.__array__():
             yield val
@@ -195,6 +198,9 @@ class Vector3():
 
     def __array__(self) -> list:
         return [self.x, self.y, self.z]
+
+    def as_array(self) -> list:
+        return self.__array__()
 
     def __iter__(self):
         for x in self.__array__():

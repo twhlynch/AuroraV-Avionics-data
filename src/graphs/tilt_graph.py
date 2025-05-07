@@ -28,7 +28,7 @@ class TiltGraph(GraphTab):
 
         for rotation in rotations:
             result = rotation.apply(z)
-            dot = np.dot(result.__array__(), z.__array__())
+            dot = np.dot(result.as_array(), z.as_array())
             dot = min(max(dot, -1.0), 1.0)  # Clamp the value for acos
             theta = acos(dot)*180/pi
 

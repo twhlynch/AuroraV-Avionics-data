@@ -42,7 +42,7 @@ class RotationGraph(GraphTab):
 
             # EULER ANGLE
             angles = [
-                Quaternion.with_array(q).as_euler(degrees=True).__array__() for q in quats[int(start_time/dt):int(duration/dt)]
+                Quaternion.with_array(q).as_euler(degrees=True).as_array() for q in quats[int(start_time/dt):int(duration/dt)]
             ]
             ax.plot(t[int(start_time/dt):int(duration/dt)], [a[0] for a in angles])
             ax.plot(t[int(start_time/dt):int(duration/dt)], [a[1] for a in angles])
