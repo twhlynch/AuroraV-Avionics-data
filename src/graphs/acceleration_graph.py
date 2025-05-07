@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 from ..graph_tab import GraphTab
 
@@ -35,9 +34,28 @@ class AccelerationGraph(GraphTab):
             for (_, d) in data_br.iterrows()
         ])
 
-        self.ax.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
-        self.ax.plot(t_br, accel_br[0:int(total_time / dt_br), 0], label="Blue Raven")
-        self.ax.set_xlabel('Time (s)')
-        self.ax.set_ylabel('Acceleration (m/s^2)')
-        self.ax.legend()
+        self.ax.clear()
+        self.ax.set_axis_off()
+        self.ax.set_title("")
+
+        ax1, ax2, ax3 = self.fig.subplots(3, 1)      
+
+        ax1.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax1.plot(t_br, accel_br[0:int(total_time / dt_br), 0], label="Blue Raven")
+        ax1.set_xlabel('Time (s)')
+        ax1.set_ylabel('Acceleration (m/s^2)')
+        ax1.legend()
+        
+        ax2.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax2.plot(t_br, accel_br[0:int(total_time / dt_br), 1], label="Blue Raven")
+        ax2.set_xlabel('Time (s)')
+        ax2.set_ylabel('Acceleration (m/s^2)')
+        ax2.legend()
+        
+        ax3.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax3.plot(t_br, accel_br[0:int(total_time / dt_br), 2], label="Blue Raven")
+        ax3.set_xlabel('Time (s)')
+        ax3.set_ylabel('Acceleration (m/s^2)')
+        ax3.legend()
+        
         self.fig.tight_layout()
