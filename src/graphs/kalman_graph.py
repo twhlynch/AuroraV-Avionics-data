@@ -12,7 +12,7 @@ class KalmanGraph(GraphTab):
         self.title = "Kalman"
 
     def graph(self):
-        data = self.data[6]
+        data = self.data[4]
         data_br = self.data[1]
         data_br_l = self.data[3]
 

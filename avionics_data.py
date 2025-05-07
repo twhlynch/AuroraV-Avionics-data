@@ -12,6 +12,8 @@ from src.graphs.gyro_graph import GyroGraph
 from src.graphs.rotation_graph import RotationGraph
 from src.graphs.kalman_graph import KalmanGraph
 
+from src.parse_data import parse_data
+
 def get_data(args: dict):
 	"""
 	Get data from binary files
@@ -21,16 +23,17 @@ def get_data(args: dict):
 	"""
 
 	# TODO: currently will just read from csv
-	return [
+	data = [
 		pd.read_csv('./data_csv/data_highres.csv'),
 		pd.read_csv('./data_csv/data_raven_highres.csv'),
 		pd.read_csv('./data_csv/data_lowres.csv'),
 		pd.read_csv('./data_csv/data_raven_lowres.csv'),
-		pd.read_csv('./data_csv/quaternion_estimate_AV.csv'),
-		pd.read_csv('./data_csv/quaternion_estimate_BR.csv'),
 		pd.read_csv('./data_csv/data_highres_2.csv')
 	]
 
+	parse_data(data, args)
+
+	return data
 
 # CLI
 def generate(args):
@@ -40,9 +43,9 @@ def generate(args):
     data[1].to_csv("data_raven_highres.csv", index=False)
     data[2].to_csv("data_lowres.csv", index=False)
     data[3].to_csv("data_raven_lowres.csv", index=False)
-    data[4].to_csv("quaternion_estimate_AV.csv", index=False)
-    data[5].to_csv("quaternion_estimate_BR.csv", index=False)
-    data[6].to_csv("data_highres_2.csv", index=False)
+    data[4].to_csv("data_highres_2.csv", index=False)
+    data[5].to_csv("quaternion_estimate_AV.csv", index=False)
+    data[6].to_csv("quaternion_estimate_BR.csv", index=False)
 
 # UI
 class App(tk.Tk):

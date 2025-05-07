@@ -11,7 +11,7 @@ class GyroGraph(GraphTab):
         self.title = "Gyro"
 
     def graph(self):
-        df = self.data[6]
+        df = self.data[4]
         df_br = self.data[1]
 
         sensitivity = 13.375  # LSB/degree
