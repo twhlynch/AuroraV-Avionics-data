@@ -42,12 +42,12 @@ class TiltGraph(GraphTab):
         time = [t * 0.002 for t in range(len(rotations))]
 
         ax1, ax2 = self.fig.subplots(2, 1)        
-        ax1.plot(time, tilt, label="Tilt (degrees)", linewidth=0.5)
+        ax1.plot(time, tilt, label="Tilt (degrees)")
         ax1.set_xlabel("Time (s)")
         ax1.set_ylabel("Tilt (degrees)")
         ax1.legend(loc="upper left")
 
         # Create a secondary y-axis for tilt cosine
-        ax2.plot(time, tilt_cosine, color="orange", label="Tilt Cosine", linewidth=0.5)
+        ax2.plot(time, tilt_cosine, color="orange", label="Tilt Cosine")
         ax2.set_ylabel("Tilt Cosine")
         ax2.legend(loc="upper right")
