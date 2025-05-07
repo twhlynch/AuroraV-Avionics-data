@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 from ..graph_tab import GraphTab
 
@@ -10,7 +11,7 @@ class GyroGraph(GraphTab):
         self.title = "Gyro"
 
     def graph(self):
-        df = self.data[0]
+        df = self.data[6]
         df_br = self.data[1]
 
         sensitivity = 13.375  # LSB/degree
@@ -24,9 +25,9 @@ class GyroGraph(GraphTab):
 
         # Extract and scale sensor data
         gyro = np.array([
-            [d['Gyro_X'] / sensitivity,
-            d['Gyro_Z'] / sensitivity,
-            d['Gyro_Y'] / sensitivity]
+            [d['gyro_x'] / sensitivity,
+            d['gyro_z'] / sensitivity,
+            d['gyro_y'] / sensitivity]
             for (_, d) in df.iterrows()
         ])
 
@@ -37,38 +38,32 @@ class GyroGraph(GraphTab):
             for (_, d) in df_br.iterrows()
         ])
 
-        self.ax.plot(t, gyro[0:int(total_time / dt), 0], label="A1 Avionics")
-        self.ax.plot(t_br, gyro_br[0:int(total_time / dt_br), 0], label="Blue Raven")
-        self.ax.set_xlabel('Time (s)')
-        self.ax.set_ylabel('X-axis rotational velocity (m/s)')
-        self.ax.legend()
+        self.ax.clear()
+        self.ax.set_axis_off()
+        self.ax.set_title("")
+        # ax1, ax2, ax3 = self.fig.subplots(1, 3)  
+        gs = gridspec.GridSpec(2, 2, figure=self.fig)
+        ax1 = self.fig.add_subplot(gs[0, :])
+        ax2 = self.fig.add_subplot(gs[1, 0])
+        ax3 = self.fig.add_subplot(gs[1, 1])
+
+        ax1.plot(t, gyro[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax1.plot(t_br, gyro_br[0:int(total_time / dt_br), 0], label="Blue Raven")
+        ax1.set_xlabel('Time (s)')
+        ax1.set_ylabel('X-axis rotational velocity (m/s)')
+        ax1.legend()
+
+        ax2.plot(t, gyro[0:int(total_time / dt), 1])
+        ax2.plot(t_br, gyro_br[0:int(total_time / dt_br), 1])
+        ax2.set_xlabel('Time (s)')
+        ax2.set_ylabel('Y-axis rotational velocity (m/s)')
+        ax2.legend(["A1 Avionics", "Blue Raven"])
+
+        ax3.plot(t, gyro[0:int(total_time / dt), 2])
+        ax3.plot(t_br, gyro_br[0:int(total_time / dt_br), 2])
+        ax3.set_xlabel('Time (s)')
+        ax3.set_ylabel('Z-axis rotational velocity (m/s)')
+        ax3.legend(["A1 Avionics", "Blue Raven"])
 
         self.fig.tight_layout()
         self.fig.canvas.draw_idle()
-
-        # plt.plot(t, gyro[0:int(total_time / dt), 0])
-        # plt.plot(t_br, gyro_br[0:int(total_time / dt_br), 0])
-        # plt.xlabel('Time (s)')
-        # plt.ylabel('X-axis rotational velocity (m/s)')
-        # plt.legend(["A1 Avionics", "Blue Raven"])
-        # # plt.savefig("./plot/gyro/Gyro_X.png")
-
-        # plt.show()
-        # plt.figure()
-        # plt.plot(t, gyro[0:int(total_time / dt), 1])
-        # plt.plot(t_br, gyro_br[0:int(total_time / dt_br), 1])
-        # plt.xlabel('Time (s)')
-        # plt.ylabel('Y-axis rotational velocity (m/s)')
-        # plt.legend(["A1 Avionics", "Blue Raven"])
-        # # plt.savefig("./plot/gyro/Gyro_Y.png")
-
-        # plt.figure()
-        # plt.plot(t, gyro[0:int(total_time / dt), 2])
-        # plt.plot(t_br, gyro_br[0:int(total_time / dt_br), 2])
-        # plt.xlabel('Time (s)')
-        # plt.ylabel('Z-axis rotational velocity (m/s)')
-        # plt.legend(["A1 Avionics", "Blue Raven"])
-        # # plt.savefig("./plot/gyro/Gyro_Z.png")
-
-        # plt.show()
-        # print("Figures saved to /plot/gyro/")
