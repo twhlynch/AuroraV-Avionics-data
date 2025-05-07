@@ -93,7 +93,7 @@ def main():
 		# rotation
 		"axisAV": "xyz[1,1,1]",
 		"axisBR": "xyz[1,1,1]",
-		"time": ["AV:0:5","BR:10:15"],
+		"time": ["AV:0:-1","BR:10:-1"],
 		"freq": "1:1",
 	}
 
