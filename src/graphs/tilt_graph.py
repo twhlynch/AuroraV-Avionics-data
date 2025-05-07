@@ -51,3 +51,5 @@ class TiltGraph(GraphTab):
         ax2.plot(time, tilt_cosine, color="orange", label="Tilt Cosine")
         ax2.set_ylabel("Tilt Cosine")
         ax2.legend(loc="upper right")
+        
+        self.fig.tight_layout()
