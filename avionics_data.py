@@ -14,7 +14,7 @@ from src.graphs.gyro_graph import GyroGraph
 from src.graphs.gyro_state_graph import GyroStateGraph
 from src.graphs.rotation_graph import RotationGraph
 from src.graphs.kalman_graph import KalmanGraph
-from src.graphs.done.plot_attitude_updated import PlotAttitudeUpdated
+from src.graphs.attitude_graph import AttitudeGraph
 from src.parse_data import parse_data
 
 
@@ -76,8 +76,8 @@ class App(tk.Tk):
 			GyroStateGraph(self.notebook, data, args),
 			RotationGraph(self.notebook, data, args),
 			KalmanGraph(self.notebook, data, args),
-			PlotAttitudeUpdated(self.notebook, data, args, data_source='AV'),
-			PlotAttitudeUpdated(self.notebook, data, args, data_source='BR'),
+			AttitudeGraph(self.notebook, data, args, data_source='AV'),
+			AttitudeGraph(self.notebook, data, args, data_source='BR'),
 		]
 
 	def on_close(self):
