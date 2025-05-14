@@ -1,2 +1,40 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-*
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual Environment (if named .venv or venv at project root)
+.venv/
+venv/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor specific files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# If your venv is the root 'bin', 'lib', 'include' folders,
+# these are usually *not* ignored by default if created by `python -m venv .`
+# The `*` was the main problem. If you find these folders are still grayed out
+# after this change and a `git add .`, we might need specific `!` rules if 
+# a global gitignore is affecting them, but that's less likely for these names.
+
+# Virtual environment files at project root
+/bin/
+/include/
+/lib/
+/share/
+pyvenv.cfg
+
+# Output files (optional - uncomment if you don't want to commit these)
+# *.mp4
+# data_csv/
