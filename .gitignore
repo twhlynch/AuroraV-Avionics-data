@@ -1,16 +1,2 @@
-# python
-/bin
-/include
-/lib
-/share
-pyvenv.cfg
-__pycache__
-
-# macos
-.DS_Store
-
-# data / output
-/bin_data 
-/csv_data
-
-# /data_csv
+# Created by venv; see https://docs.python.org/3/library/venv.html
+*
