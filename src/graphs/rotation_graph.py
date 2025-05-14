@@ -23,8 +23,7 @@ class RotationGraph(GraphTab):
             ax.set_title(f"Euler angle {typestr}")
             ax.legend(["Roll", "Pitch", "Yaw"], loc="lower right")
 
-        data_AV = self.data[0]
-        data_BR = self.data[1]
+        data = self.data[1]
 
         # Time parsing
         # -------------------------------------------------------
@@ -46,10 +45,10 @@ class RotationGraph(GraphTab):
         dt = 1/freq
 
         quats_AV = list(zip(
-            self.data[5]["x"],
-            self.data[5]["y"],
-            self.data[5]["z"],
-            self.data[5]["w"]
+            self.data[1]["quat_x"],
+            self.data[1]["quat_y"],
+            self.data[1]["quat_z"],
+            self.data[1]["quat_w"]
         ))
         visualise(quats_AV, start_AV, duration_AV, dt, "AV estimates", ax1)
 
@@ -60,18 +59,18 @@ class RotationGraph(GraphTab):
         dt = 1/freq
 
         quats_BR = list(zip(
-            self.data[6]["x"],
-            self.data[6]["y"],
-            self.data[6]["z"],
-            self.data[6]["w"]
+            self.data[1]["quat_x"],
+            self.data[1]["quat_y"],
+            self.data[1]["quat_z"],
+            self.data[1]["quat_w"]
         ))
         visualise(quats_BR, start_BR, duration_BR, dt, "BR estimates", ax2)
 
         quats_truth = list(zip(
-            [-x for x in data_BR['Quat_4']],
-            [y for y in data_BR['Quat_3']],
-            [z for z in data_BR['Quat_2']],
-            [w for w in data_BR['Quat_1']],
+            [-x for x in data['quat_x']],
+            [y for y in data['quat_y']],
+            [z for z in data['quat_z']],
+            [w for w in data['quat_w']],
         ))
         visualise(quats_truth, start_BR, duration_BR, dt, "truth", ax3)
 

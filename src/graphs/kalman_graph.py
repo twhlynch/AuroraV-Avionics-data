@@ -10,38 +10,38 @@ class KalmanGraph(GraphTab):
         self.title = "Kalman"
 
     def graph(self):
-        data = self.data[4]
+        data = self.data[1]
         data_br = self.data[1]
-        data_br_l = self.data[3]
+        data_br_l = self.data[0]
 
         # Constants and data preparation
-        data_count = len(data['sync'])
+        data_count = len(data_br_l['time'])
         dt = 0.004 # Time interval between measurements
         gyro_sens = 13.375
         accel_sens = 0.031
 
         t = [x * dt for x in range(data_count)]
-        t_br = data_br['Flight_Time_(s)']
-        t_br_l = data_br_l['Flight_Time_(s)']
+        t_br = data_br['time']
+        t_br_l = data_br_l['time']
 
         accel = [
-            [9.81 * x * accel_sens for x in data['accel_x']],
-            [9.81 * x * accel_sens for x in data['accel_y']],
-            [9.81 * x * accel_sens for x in data['accel_z']]
+            [9.81 * x * accel_sens for x in data['acc_x']],
+            [9.81 * x * accel_sens for x in data['acc_y']],
+            [9.81 * x * accel_sens for x in data['acc_z']]
         ]
 
         accel_br = [
-            [9.81 * x for x in data_br['Accel_X']],
-            [9.81 * x for x in data_br['Accel_Y']],
-            [9.81 * x for x in data_br['Accel_Z']]
+            [9.81 * x for x in data_br['acc_x']],
+            [9.81 * x for x in data_br['acc_y']],
+            [9.81 * x for x in data_br['acc_z']]
         ]
 
-        cosines = data["Tilt_Cosine"]
+        cosines = data["tilt_cos"]
 
-        baro = [x for x in data_br_l["Baro_Altitude_AGL_(feet)"]]
+        baro = [x for x in data_br_l["press"]]
         baro = np.repeat(baro[100:], 5)
 
-        vel_br = list(np.repeat(data_br_l["Velocity_Up"], 5)[0:data_count])
+        vel_br = list(np.repeat(data_br["vel_y"], 5)[0:data_count])
 
         # Lists to store estimated states and covariances
         x_est_list = []
@@ -74,34 +74,32 @@ class KalmanGraph(GraphTab):
             ])
 
             # Kalman filter loop
-            try:
-                for i in range(data_count):
-                    # Prediction step
-                    x = F @ x  # State prediction
-                    P = F @ P @ F.T + Q  # Covariance prediction
+            for i in range(data_count):
+                # Prediction step
+                x = F @ x  # State prediction
+                P = F @ P @ F.T + Q  # Covariance prediction
 
-                    # Measurement update step
-                    # Altitude and acceleration measurements
-                    z = np.array(
-                        [[baro[i]], [3.28*(cosines[i] * accel[0][i]-9.81)]]
-                    )
-                    
-                    y = z - H @ x  
-                    S = H @ P @ H.T + R
-                    K = P @ H.T @ np.linalg.inv(S)
-                    x = x + K @ y
-                    P = (np.eye(len(P)) - K @ H) @ P
-
-                    # Store estimates
-                    x_est_list.append(x.copy())
-                    P_est_list.append(P.copy())
-
-                if flag:
-                    return x_est_list
+                # Measurement update step
+                # Altitude and acceleration measurements
+                z = np.array(
+                    [[baro[i]], [3.28*(cosines[i] * accel[0][i]-9.81)]]
+                )
                 
-                return -root_mean_squared_error(vel_br[2890:], [x[1][0] for x in x_est_list[2890:]])
-            except:
-                return -1000
+                y = z - H @ x  
+                S = H @ P @ H.T + R
+                K = P @ H.T @ np.linalg.inv(S)
+                x = x + K @ y
+                P = (np.eye(len(P)) - K @ H) @ P
+
+                # Store estimates
+                x_est_list.append(x.copy())
+                P_est_list.append(P.copy())
+
+            if flag:
+                return x_est_list
+            
+            return -root_mean_squared_error(vel_br[2890:], [x[1][0] for x in x_est_list[2890:]])
+
             
         p_bounds = {
             'q0': (0.001, 100), 'q1': (0.001, 100), 'q2': (0.001, 100),
@@ -133,7 +131,7 @@ class KalmanGraph(GraphTab):
         self.ax.clear()
         self.ax.set_title("Global vertical velocity")
         self.ax.plot(t, estimated_velocities)
-        self.ax.plot(t_br_l, data_br_l["Velocity_Up"])
+        self.ax.plot(t_br, data_br["vel_y"])
         self.ax.set_xlabel("Time (s)")
         self.ax.set_ylabel("Velocity (m/s)")
         self.ax.legend(["Calculated estimate", "BR ground truth"])

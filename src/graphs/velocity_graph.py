@@ -6,11 +6,10 @@ class VelocityGraph(GraphTab):
         self.title = "Velocity"
 
     def graph(self):
-        data = self.data[0]
-        data_br = self.data[3]
+        data = self.data[1]
 
-        cosines = data["Tilt_Cosine"]
-        accel_x = data["Accel_X"]
+        cosines = data["tilt_cos"]
+        accel_x = data["acc_x"]
 
         sensitivity = 31 / 1000   # mG/LSB (converted to g)
         dt = 0.004                # Time step (seconds)
@@ -31,7 +30,7 @@ class VelocityGraph(GraphTab):
 
         # Plot the results
         self.ax.plot(t, velocity_x)  # Plot time on x-axis
-        self.ax.plot(data_br["Flight_Time_(s)"], data_br["Velocity_Up"])
+        self.ax.plot(data["time"], data["acc_y"])
         self.ax.set_xlabel('Time (seconds)')
         self.ax.set_ylabel('X-Axis Velocity (g)')
         self.ax.set_title('X-Axis Velocity from Accelerometer Data')

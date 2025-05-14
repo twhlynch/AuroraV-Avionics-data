@@ -16,7 +16,7 @@ from src.graphs.rotation_graph import RotationGraph
 from src.graphs.kalman_graph import KalmanGraph
 from src.graphs.attitude_graph import AttitudeGraph
 from src.parse_data import parse_data
-
+from src.read_data import read_data
 
 def get_data(args: dict):
 	"""
@@ -25,16 +25,12 @@ def get_data(args: dict):
 	Returns:
 		A DataFrame of the combined data
 	"""
-	script_dir = os.path.dirname(os.path.abspath(__file__))
-	data_csv_dir = os.path.join(script_dir, 'data_csv')
 
-	# TODO: currently will just read from csv
+	data_lowres, data_highres = read_data(args["data"])
+
 	data = [
-		pd.read_csv(os.path.join(data_csv_dir, 'data_highres.csv')),
-		pd.read_csv(os.path.join(data_csv_dir, 'data_raven_highres.csv')),
-		pd.read_csv(os.path.join(data_csv_dir, 'data_lowres.csv')),
-		pd.read_csv(os.path.join(data_csv_dir, 'data_raven_lowres.csv')),
-		pd.read_csv(os.path.join(data_csv_dir, 'data_highres_2.csv'))
+		data_lowres,
+		data_highres,
 	]
 
 	parse_data(data, args)
@@ -45,16 +41,11 @@ def get_data(args: dict):
 def generate(args):
     data = get_data(args)
 
-    output_dir = './data_csv'
+    output_dir = './csv_data'
     os.makedirs(output_dir, exist_ok=True)
 
-    data[0].to_csv(os.path.join(output_dir, "data_highres.csv"), index=False)
-    data[1].to_csv(os.path.join(output_dir, "data_raven_highres.csv"), index=False)
-    data[2].to_csv(os.path.join(output_dir, "data_lowres.csv"), index=False)
-    data[3].to_csv(os.path.join(output_dir, "data_raven_lowres.csv"), index=False)
-    data[4].to_csv(os.path.join(output_dir, "data_highres_2.csv"), index=False)
-    data[5].to_csv(os.path.join(output_dir, "quaternion_estimate_AV.csv"), index=False)
-    data[6].to_csv(os.path.join(output_dir, "quaternion_estimate_BR.csv"), index=False)
+    data[0].to_csv(os.path.join(output_dir, "data_lowres.csv"), index=False)
+    data[1].to_csv(os.path.join(output_dir, "data_highres.csv"), index=False)
 
 # UI
 class App(tk.Tk):
@@ -100,7 +91,7 @@ def main():
 	else:
 		args = {
 			"csv": False,
-			"data": "data.bin",
+			"data": "bin_data/20250504_AV",
 
 			# rotation
 			"axisAV": "xyz[1,1,1]",

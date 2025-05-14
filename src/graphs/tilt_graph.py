@@ -10,34 +10,16 @@ class TiltGraph(GraphTab):
         self.title = "Tilt"
 
     def graph(self):
-        quat = self.data[5]
+        quat = self.data[1]
 
-        quats = list(zip(
-            quat["x"],
-            quat["y"],
-            quat["z"],
-            quat["w"],
-        ))
-        rotations = [Quaternion.with_array(q) for q in quats]
-
-        z = Vector3(0, 0, 1)
-        tilt = []
-        tilt_cosine = []
-
-        for rotation in rotations:
-            result = rotation.apply(z)
-            dot = np.dot(result.as_array(), z.as_array())
-            dot = min(max(dot, -1.0), 1.0)  # Clamp the value for acos
-            theta = acos(dot)*180/pi
-
-            tilt.append(theta)
-            tilt_cosine.append(cos(theta*pi/180))
+        tilt = quat["tilt"]
+        tilt_cosine = quat["tilt_cos"]
 
         self.ax.clear()
         self.ax.set_axis_off()
         self.ax.set_title("Aurora I body-axis tilt")
 
-        time = [t * 0.002 for t in range(len(rotations))]
+        time = [t * 0.002 for t in range(len(tilt))]
 
         ax1, ax2 = self.fig.subplots(2, 1)        
         ax1.plot(time, tilt, label="Tilt (degrees)", linewidth=0.4)

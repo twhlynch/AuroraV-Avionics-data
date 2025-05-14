@@ -48,9 +48,9 @@ class AttitudeGraph(GraphTab):
         source_index = -1
 
         if self.data_source == 'AV':
-            source_index = 5
+            source_index = 1
         elif self.data_source == 'BR':
-            source_index = 6
+            source_index = 1
         else:
             print(f"Warning: Unknown data source '{self.data_source}' for attitude data.")
             self.quaternions = []
@@ -63,13 +63,13 @@ class AttitudeGraph(GraphTab):
             self.quaternions = []
             return
         
-        if not all(col in df_quats.columns for col in ['x', 'y', 'z', 'w']):
+        if not all(col in df_quats.columns for col in ['quat_x', 'quat_y', 'quat_z', 'quat_w']):
             print(f"Warning: Quaternion DataFrame for {self.data_source} is missing x,y,z, or w columns.")
             self.quaternions = []
             return
 
         loaded_quats = list(zip(
-            df_quats['x'], df_quats['y'], df_quats['z'], df_quats['w']
+            df_quats['quat_x'], df_quats['quat_y'], df_quats['quat_z'], df_quats['quat_w']
         ))
 
         if self.data_source == 'AV':

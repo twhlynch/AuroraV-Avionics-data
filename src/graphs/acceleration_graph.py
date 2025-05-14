@@ -8,8 +8,7 @@ class AccelerationGraph(GraphTab):
         self.title = "Acceleration"
 
     def graph(self):
-        data = self.data[0]
-        data_br = self.data[1]
+        data = self.data[1]
         
         sensitivity = 0.031  # mG/LSB (converted to g)
         total_time = 50
@@ -22,16 +21,10 @@ class AccelerationGraph(GraphTab):
 
         # Extract and scale sensor data
         accel = np.array([
-            [d['Accel_Y'] * d['Tilt_Cosine'] * sensitivity * g,
-            d['Accel_Z'] * d['Tilt_Cosine'] * sensitivity * g,
-            d['Accel_X'] * d['Tilt_Cosine'] * sensitivity * g]
+            [d['acc_y'] * d['tilt_cos'] * sensitivity * g,
+            d['acc_z'] * d['tilt_cos'] * sensitivity * g,
+            d['acc_x'] * d['tilt_cos'] * sensitivity * g]
             for (_, d) in data.iterrows()
-        ])
-        accel_br = np.array([
-            [d['Accel_Z'] * -g,
-            d['Accel_Y'] * g,
-            d['Accel_X'] * g]
-            for (_, d) in data_br.iterrows()
         ])
 
         self.ax.clear()
@@ -41,19 +34,16 @@ class AccelerationGraph(GraphTab):
         ax1, ax2, ax3 = self.fig.subplots(3, 1)      
 
         ax1.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
-        ax1.plot(t_br, accel_br[0:int(total_time / dt_br), 0], label="Blue Raven")
         ax1.set_xlabel('Time (s)')
         ax1.set_ylabel('Acceleration (m/s^2)')
         ax1.legend()
         
         ax2.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
-        ax2.plot(t_br, accel_br[0:int(total_time / dt_br), 1], label="Blue Raven")
         ax2.set_xlabel('Time (s)')
         ax2.set_ylabel('Acceleration (m/s^2)')
         ax2.legend()
         
         ax3.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
-        ax3.plot(t_br, accel_br[0:int(total_time / dt_br), 2], label="Blue Raven")
         ax3.set_xlabel('Time (s)')
         ax3.set_ylabel('Acceleration (m/s^2)')
         ax3.legend()

@@ -11,14 +11,13 @@ class GyroStateGraph(GraphTab):
     def graph(self):
         data_br = self.data[1]
 
-        data_count = len(data_br['Flight_Time_(s)'])
+        data_count = len(data_br['gyro_x'])
         dt = 0.002
-        
-        t_br = data_br['Flight_Time_(s)']
+
         gyro_br = [
-            [x for x in data_br['Gyro_X']],
-            [x for x in data_br['Gyro_Y']],
-            [x for x in data_br['Gyro_Z']]
+            [x for x in data_br['gyro_x']],
+            [x for x in data_br['gyro_y']],
+            [x for x in data_br['gyro_z']]
         ]
 
 
@@ -38,10 +37,10 @@ class GyroStateGraph(GraphTab):
             for (x, y, z) in x_est_list[1:]
         ]
         quat_br = list(zip(
-            data_br["Quat_1"],
-            data_br["Quat_2"],
-            data_br["Quat_3"],
-            data_br["Quat_4"],
+            data_br["quat_x"],
+            data_br["quat_y"],
+            data_br["quat_z"],
+            data_br["quat_w"],
         ))
         euler = [
             Quaternion.with_array(quat).as_euler().as_array()
@@ -71,26 +70,26 @@ class GyroStateGraph(GraphTab):
         # ax1.title("Euler angle estimates")
         # ax1.legend(["Roll", "Pitch", "Yaw"], loc="upper left")
 
-        ax1.plot(t_br[0:int(12/dt)], [x[3] for x in quat[0:int(12/dt)]])
-        ax1.plot(t_br[0:int(12/dt)], [x[0] for x in quat_br[0:int(12/dt)]])
+        ax1.plot(data_br["time"][0:int(12/dt)], [x[3] for x in quat[0:int(12/dt)]])
+        ax1.plot(data_br["time"][0:int(12/dt)], [x[0] for x in quat_br[0:int(12/dt)]])
         ax1.set_xlabel("Time (s)")
         ax1.set_title("Quaternion w")
         ax1.legend(["Estimated", "Ground truth"], loc="lower left")
 
-        ax2.plot(t_br[0:int(12/dt)], [x[0] for x in quat[0:int(12/dt)]])
-        ax2.plot(t_br[0:int(12/dt)], [x[1] for x in quat_br[0:int(12/dt)]])
+        ax2.plot(data_br["time"][0:int(12/dt)], [x[0] for x in quat[0:int(12/dt)]])
+        ax2.plot(data_br["time"][0:int(12/dt)], [x[1] for x in quat_br[0:int(12/dt)]])
         ax2.set_xlabel("Time (s)")
         ax2.set_title("Quaternion x")
         ax2.legend(["Estimated", "Ground truth"], loc="lower left")
 
-        ax3.plot(t_br[0:int(12/dt)], [x[2] for x in quat[0:int(12/dt)]])
-        ax3.plot(t_br[0:int(12/dt)], [x[2] for x in quat_br[0:int(12/dt)]])
+        ax3.plot(data_br["time"][0:int(12/dt)], [x[2] for x in quat[0:int(12/dt)]])
+        ax3.plot(data_br["time"][0:int(12/dt)], [x[2] for x in quat_br[0:int(12/dt)]])
         ax3.set_xlabel("Time (s)")
         ax3.set_title("Quaternion y")
         ax3.legend(["Estimated", "Ground truth"], loc="lower left")
 
-        ax4.plot(t_br[0:int(12/dt)], [x[1] for x in quat[0:int(12/dt)]])
-        ax4.plot(t_br[0:int(12/dt)], [x[3] for x in quat_br[0:int(12/dt)]])
+        ax4.plot(data_br["time"][0:int(12/dt)], [x[1] for x in quat[0:int(12/dt)]])
+        ax4.plot(data_br["time"][0:int(12/dt)], [x[3] for x in quat_br[0:int(12/dt)]])
         ax4.set_xlabel("Time (s)")
         ax4.set_title("Quaternion z")
         ax4.legend(["Estimated", "Ground truth"], loc="lower left")
