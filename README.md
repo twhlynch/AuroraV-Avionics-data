@@ -12,17 +12,17 @@ Something something data blah
 ### On macOS/Linux
 1. Create a virtual environment:
 	```bash
-	python3 -m venv .
+	python3 -m venv .venv
 	```
 2. Activate the virtual environment:
 	```bash
-	source bin/activate
+	source .venv/bin/activate
 	```
 3. Install dependencies:
 	```bash
 	pip install -r requirements.txt
 	```
-4. Install `tkinter` if on macOS:
+4. Install `tkinter` if needed on macOS:
 	```bash
 	brew install python-tk
 	```
@@ -31,11 +31,11 @@ Something something data blah
 > Note: your `python` executable may be `py`, `py3`, or `python3`
 1. Create a virtual environment:
 	```cmd
-	python -m venv .
+	python -m venv .venv
 	```
 2. Activate the virtual environment:
 	```cmd
-	Scripts\activate
+	.venv\Scripts\activate
 	```
 3. Install dependencies:
 	```cmd
