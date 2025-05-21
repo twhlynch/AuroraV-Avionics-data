@@ -33,36 +33,36 @@ def parse_data(data: list, args: dict):
         return quats
 
     # Rotate AV data to global frame
-    ax_AV = args['axisAV'][:3]
+    axis = args['axis'][:3]
     scale = Vector3.with_array(list(map(
-        float, args['axisAV'][4:-1].split(',')
+        float, args['axis'][4:-1].split(',')
     )))
     sens = 13.375
-    gyro_AV = [
-        [scale.x * x / sens for x in data_highres[f'gyro_{str(ax_AV[0]).lower()}']],
-        [scale.y * y / sens for y in data_highres[f'gyro_{str(ax_AV[1]).lower()}']],
-        [scale.z * z / sens for z in data_highres[f'gyro_{str(ax_AV[2]).lower()}']],
+    gyro = [
+        [scale.x * x / sens for x in data_highres[f'gyro_{str(axis[0]).lower()}']],
+        [scale.y * y / sens for y in data_highres[f'gyro_{str(axis[1]).lower()}']],
+        [scale.z * z / sens for z in data_highres[f'gyro_{str(axis[2]).lower()}']],
     ]
 
     # estimates
     freq = int(args['freq'].split(':')[0])
     dt = 1/freq
-    quats_AV = list(map(Quaternion.as_array, calculate_quat(gyro_AV, dt)))
+    quats = list(map(Quaternion.as_array, calculate_quat(gyro, dt)))
     
-    df_quats_AV = pd.DataFrame(quats_AV, columns=["x", "y", "z", "w"])
-    print(df_quats_AV)
-    data[1]["quat_x"] = [quat for quat in df_quats_AV["x"][1:]]
-    data[1]["quat_y"] = [quat for quat in df_quats_AV["y"][1:]]
-    data[1]["quat_z"] = [quat for quat in df_quats_AV["z"][1:]]
-    data[1]["quat_w"] = [quat for quat in df_quats_AV["w"][1:]]
+    df_quats = pd.DataFrame(quats, columns=["x", "y", "z", "w"])
+    print(df_quats)
+    data[1]["quat_x"] = [quat for quat in df_quats["x"][1:]]
+    data[1]["quat_y"] = [quat for quat in df_quats["y"][1:]]
+    data[1]["quat_z"] = [quat for quat in df_quats["z"][1:]]
+    data[1]["quat_w"] = [quat for quat in df_quats["w"][1:]]
 
 
     # MARK: tilt
     quats = list(zip(
-        df_quats_AV["x"],
-        df_quats_AV["y"],
-        df_quats_AV["z"],
-        df_quats_AV["w"],
+        df_quats["x"],
+        df_quats["y"],
+        df_quats["z"],
+        df_quats["w"],
     ))
     rotations = [Quaternion.with_array(q) for q in quats]
 

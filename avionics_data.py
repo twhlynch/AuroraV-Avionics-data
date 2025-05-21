@@ -94,9 +94,8 @@ def main():
 			"data": "bin_data/20250504_AV",
 
 			# rotation
-			"axisAV": "xyz[1,1,1]",
-			"axisBR": "xyz[1,1,1]",
-			"time": ["AV:0:-1","BR:10:-1"],
+			"axis": "xyz[1,1,1]",
+			"time": "0:-1",
 			"freq": "1:1",
 		}
 

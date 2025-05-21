@@ -27,44 +27,21 @@ class RotationGraph(GraphTab):
 
         # Time parsing
         # -------------------------------------------------------
-        time_ranges = {}
-        for time_str in self.args['time']:
-            source, start, duration = time_str.split(':')
-            time_ranges[source] = (float(start), float(duration))
+        time_range = self.args['time'].split(":")
+        time_range = (float(time_range[0]), float(time_range[1]))
 
-        # axis grid
-        self.ax.clear()
-        self.ax.set_axis_off()
-        self.ax.set_title("")
-        ax1, ax2, ax3 = self.fig.subplots(3, 1)
-
-        # Visualise AV estimates
+        # Visualise estimates
         # -----------------------------------------------------------
-        start_AV, duration_AV = time_ranges['AV']
+        start, duration = time_range
         freq = int(self.args['freq'].split(':')[0])
         dt = 1/freq
 
-        quats_AV = list(zip(
-            self.data[1]["quat_x"],
-            self.data[1]["quat_y"],
-            self.data[1]["quat_z"],
-            self.data[1]["quat_w"]
+        quats = list(zip(
+            data["quat_x"],
+            data["quat_y"],
+            data["quat_z"],
+            data["quat_w"]
         ))
-        visualise(quats_AV, start_AV, duration_AV, dt, "AV estimates", ax1)
-
-        # Visualise BR estimates
-        # -----------------------------------------------------------
-        start_BR, duration_BR = time_ranges['BR']
-        freq = int(self.args['freq'].split(':')[1])
-        dt = 1/freq
-
-        quats_BR = list(zip(
-            self.data[1]["quat_x"],
-            self.data[1]["quat_y"],
-            self.data[1]["quat_z"],
-            self.data[1]["quat_w"]
-        ))
-        visualise(quats_BR, start_BR, duration_BR, dt, "BR estimates", ax2)
 
         quats_truth = list(zip(
             [-x for x in data['quat_x']],
@@ -72,7 +49,14 @@ class RotationGraph(GraphTab):
             [z for z in data['quat_z']],
             [w for w in data['quat_w']],
         ))
-        visualise(quats_truth, start_BR, duration_BR, dt, "truth", ax3)
 
+        # axis grid
+        self.ax.clear()
+        self.ax.set_axis_off()
+        self.ax.set_title("")
+        ax1, ax2 = self.fig.subplots(2, 1)
+
+        visualise(quats, start, duration, dt, "estimates", ax1)
+        visualise(quats_truth, start, duration, dt, "truth", ax2)
 
         self.fig.tight_layout()
