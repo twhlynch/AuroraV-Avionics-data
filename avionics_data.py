@@ -15,6 +15,7 @@ from src.graphs.gyro_state_graph import GyroStateGraph
 from src.graphs.rotation_graph import RotationGraph
 from src.graphs.kalman_graph import KalmanGraph
 from src.graphs.attitude_graph import AttitudeGraph
+from src.graphs.raw_graph import RawGraph
 from src.parse_data import parse_data
 from src.read_data import read_data
 
@@ -60,6 +61,7 @@ class App(tk.Tk):
 		data = get_data(args)
 
 		self.tabs = [
+			RawGraph(self.notebook, data, args),
 			AccelerationGraph(self.notebook, data, args),
 			VelocityGraph(self.notebook, data, args),
 			TiltGraph(self.notebook, data, args),
