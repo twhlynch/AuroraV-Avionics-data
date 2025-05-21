@@ -2,12 +2,19 @@ import tkinter as tk
 from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from pandas import DataFrame
 
 
 class GraphTab(ttk.Frame):
+	data: list[DataFrame]
+	args: dict
+	fig: plt.Figure
+	ax: plt.Axes
+	canvas: FigureCanvasTkAgg
+	toolbar: NavigationToolbar2Tk
+
 	def __init__(self, parent: ttk.Notebook, data: list, args: dict):
 		"""
-
 		Args:
 			parent (ttk.Notebook): The parent notebook
 			data (list): a list of datasets to be used
@@ -21,17 +28,17 @@ class GraphTab(ttk.Frame):
 
 		parent.add(self, text=self.title)
 		plt.rcParams['font.size'] = 7
-		self.fig, self.ax = plt.subplots(figsize=(6, 4), dpi=80)
+		self.fig, self.ax = plt.subplots(figsize=(6, 5), dpi=100)
 
 		self.graph()
 
-		canvas = FigureCanvasTkAgg(self.fig, master=self)
-		toolbar = NavigationToolbar2Tk(canvas, self)
-		toolbar.update()
+		self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+		self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+		self.toolbar.update()
 
-		canvas.draw()
-		canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-		toolbar.pack(side=tk.BOTTOM, fill=tk.X)
+		self.canvas.draw()
+		self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+		self.toolbar.pack(side=tk.BOTTOM, fill=tk.X)
 
 	def setup(self):
 		"""
