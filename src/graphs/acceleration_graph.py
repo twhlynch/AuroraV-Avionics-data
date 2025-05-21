@@ -17,7 +17,6 @@ class AccelerationGraph(GraphTab):
         dt = 1/HIGHRES_HZ  # Time step (seconds)
 
         t = [dt*x for x in range(int(total_time / dt))]
-        t_br = [dt_br*x-2 for x in range(int(total_time / dt_br))]
 
         # Extract and scale sensor data
         accel = np.array([
@@ -33,19 +32,16 @@ class AccelerationGraph(GraphTab):
 
         ax1, ax2, ax3 = self.fig.subplots(3, 1)      
 
-        ax1.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax1.plot(t, accel[0:int(total_time / dt), 0])
         ax1.set_xlabel('Time (s)')
-        ax1.set_ylabel('Acceleration (m/s^2)')
-        ax1.legend()
-        
-        ax2.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax1.set_ylabel('Acceleration y (m/s^2)')
+
+        ax2.plot(t, accel[0:int(total_time / dt), 1])
         ax2.set_xlabel('Time (s)')
-        ax2.set_ylabel('Acceleration (m/s^2)')
-        ax2.legend()
-        
-        ax3.plot(t, accel[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax2.set_ylabel('Acceleration z (m/s^2)')
+
+        ax3.plot(t, accel[0:int(total_time / dt), 2])
         ax3.set_xlabel('Time (s)')
-        ax3.set_ylabel('Acceleration (m/s^2)')
-        ax3.legend()
-        
+        ax3.set_ylabel('Acceleration x (m/s^2)')
+
         self.fig.tight_layout()

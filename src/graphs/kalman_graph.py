@@ -12,37 +12,26 @@ class KalmanGraph(GraphTab):
 
     def graph(self):
         data = self.data[1]
-        data_br = self.data[1]
-        data_br_l = self.data[0]
+        data_l = self.data[0]
 
         # Constants and data preparation
-        data_count = len(data_br_l['time'])
-        dt = 0.004 # Time interval between measurements
-        gyro_sens = 13.375
-        accel_sens = 0.031
-
-        t = [x * dt for x in range(data_count)]
-        t_br = data_br['time']
-        t_br_l = data_br_l['time']
+        data_count = len(data_l['time'])
+        dt = 1/HIGHRES_HZ # Time interval between measurements
+        gyro_sens = 1
+        accel_sens = 1
 
         accel = [
-            [9.81 * x * accel_sens for x in data['acc_x']],
-            [9.81 * x * accel_sens for x in data['acc_y']],
-            [9.81 * x * accel_sens for x in data['acc_z']]
-        ]
-
-        accel_br = [
-            [9.81 * x for x in data_br['acc_x']],
-            [9.81 * x for x in data_br['acc_y']],
-            [9.81 * x for x in data_br['acc_z']]
+            [GRAVITY * x * accel_sens for x in data['acc_x']],
+            [GRAVITY * x * accel_sens for x in data['acc_y']],
+            [GRAVITY * x * accel_sens for x in data['acc_z']]
         ]
 
         cosines = data["tilt_cos"]
 
-        baro = [x for x in data_br_l["press"]]
+        baro = [x for x in data_l["press"]]
         baro = np.repeat(baro[100:], 5)
 
-        vel_br = list(np.repeat(data_br["vel_y"], 5)[0:data_count])
+        vel = list(np.repeat(data["vel_x"], 5)[0:data_count])
 
         # Lists to store estimated states and covariances
         x_est_list = []
@@ -83,7 +72,7 @@ class KalmanGraph(GraphTab):
                 # Measurement update step
                 # Altitude and acceleration measurements
                 z = np.array(
-                    [[baro[i]], [3.28*(cosines[i] * accel[0][i]-9.81)]]
+                    [[baro[i]], [3.28*(cosines[i] * accel[0][i]-GRAVITY)]]
                 )
                 
                 y = z - H @ x  
@@ -99,9 +88,8 @@ class KalmanGraph(GraphTab):
             if flag:
                 return x_est_list
             
-            return -root_mean_squared_error(vel_br[2890:], [x[1][0] for x in x_est_list[2890:]])
+            return -root_mean_squared_error(vel[2890:], [x[1][0] for x in x_est_list[2890:]])
 
-            
         p_bounds = {
             'q0': (0.001, 100), 'q1': (0.001, 100), 'q2': (0.001, 100),
             'r0': (0.001, 100), 'r1': (0.001, 100)
@@ -131,10 +119,10 @@ class KalmanGraph(GraphTab):
 
         self.ax.clear()
         self.ax.set_title("Global vertical velocity")
-        self.ax.plot(t, estimated_velocities)
-        self.ax.plot(t_br, data_br["vel_y"])
+        self.ax.plot(data_l["time"], estimated_velocities)
+        self.ax.plot(data["time"], data["vel_x"])
         self.ax.set_xlabel("Time (s)")
         self.ax.set_ylabel("Velocity (m/s)")
-        self.ax.legend(["Calculated estimate", "BR ground truth"])
+        self.ax.legend(["Calculated estimate", "ground truth"])
         # self.ax.text(0.5, 0.5, str(p), fontsize=12, ha='center', va='center')
         self.fig.tight_layout()

@@ -10,23 +10,23 @@ class GyroStateGraph(GraphTab):
         self.title = "Gyro State"
 
     def graph(self):
-        data_br = self.data[1]
+        data = self.data[1]
 
         data_count = len(data['gyro_x'])
         dt = 1 / HIGHRES_HZ
 
-        gyro_br = [
-            [x for x in data_br['gyro_x']],
-            [x for x in data_br['gyro_y']],
-            [x for x in data_br['gyro_z']]
+        gyro = [
+            [x for x in data['gyro_x']],
+            [x for x in data['gyro_y']],
+            [x for x in data['gyro_z']]
         ]
 
 
         x_est_list = [[0, 0, 0]]
         for i in range(data_count):
-            gyro_x = gyro_br[0][i] - (-0.12)
-            gyro_y = gyro_br[2][i] - (0.61)
-            gyro_z = gyro_br[1][i] - (-0.59)
+            gyro_x = gyro[0][i] - (-0.12)
+            gyro_y = gyro[2][i] - (0.61)
+            gyro_z = gyro[1][i] - (-0.59)
             x_est_list.append([
                 x_est_list[i][0] + dt*gyro_x,
                 x_est_list[i][1] + dt*gyro_y,
@@ -37,19 +37,19 @@ class GyroStateGraph(GraphTab):
             Quaternion.with_half_euler(x, y, z)
             for (x, y, z) in x_est_list[1:]
         ]
-        quat_br = list(zip(
-            data_br["quat_x"],
-            data_br["quat_y"],
-            data_br["quat_z"],
-            data_br["quat_w"],
+        quat_data = list(zip(
+            data["quat_x"],
+            data["quat_y"],
+            data["quat_z"],
+            data["quat_w"],
         ))
         euler = [
             Quaternion.with_array(quat).as_euler().as_array()
-            for quat in quat_br
+            for quat in quat_data
         ]
 
         estimated_roll = [x[0] for x in x_est_list[1:]]
-        estimated_pitch = [x[1] for x in x_est_list[1:]]
+        estimated_pitch = [x[1] for x in x_est_list[1:]] # TODO: these might be useful for other graphs
         estimated_yaw = [x[2] for x in x_est_list[1:]]
 
 
@@ -71,26 +71,26 @@ class GyroStateGraph(GraphTab):
         # ax1.title("Euler angle estimates")
         # ax1.legend(["Roll", "Pitch", "Yaw"], loc="upper left")
 
-        ax1.plot(data_br["time"][0:int(12/dt)], [x[3] for x in quat[0:int(12/dt)]])
-        ax1.plot(data_br["time"][0:int(12/dt)], [x[0] for x in quat_br[0:int(12/dt)]])
+        ax1.plot(data["time"][0:int(12/dt)], [x[3] for x in quat[0:int(12/dt)]])
+        ax1.plot(data["time"][0:int(12/dt)], [x[0] for x in quat_data[0:int(12/dt)]])
         ax1.set_xlabel("Time (s)")
         ax1.set_title("Quaternion w")
         ax1.legend(["Estimated", "Ground truth"], loc="lower left")
 
-        ax2.plot(data_br["time"][0:int(12/dt)], [x[0] for x in quat[0:int(12/dt)]])
-        ax2.plot(data_br["time"][0:int(12/dt)], [x[1] for x in quat_br[0:int(12/dt)]])
+        ax2.plot(data["time"][0:int(12/dt)], [x[0] for x in quat[0:int(12/dt)]])
+        ax2.plot(data["time"][0:int(12/dt)], [x[1] for x in quat_data[0:int(12/dt)]])
         ax2.set_xlabel("Time (s)")
         ax2.set_title("Quaternion x")
         ax2.legend(["Estimated", "Ground truth"], loc="lower left")
 
-        ax3.plot(data_br["time"][0:int(12/dt)], [x[2] for x in quat[0:int(12/dt)]])
-        ax3.plot(data_br["time"][0:int(12/dt)], [x[2] for x in quat_br[0:int(12/dt)]])
+        ax3.plot(data["time"][0:int(12/dt)], [x[2] for x in quat[0:int(12/dt)]])
+        ax3.plot(data["time"][0:int(12/dt)], [x[2] for x in quat_data[0:int(12/dt)]])
         ax3.set_xlabel("Time (s)")
         ax3.set_title("Quaternion y")
         ax3.legend(["Estimated", "Ground truth"], loc="lower left")
 
-        ax4.plot(data_br["time"][0:int(12/dt)], [x[1] for x in quat[0:int(12/dt)]])
-        ax4.plot(data_br["time"][0:int(12/dt)], [x[3] for x in quat_br[0:int(12/dt)]])
+        ax4.plot(data["time"][0:int(12/dt)], [x[1] for x in quat[0:int(12/dt)]])
+        ax4.plot(data["time"][0:int(12/dt)], [x[3] for x in quat_data[0:int(12/dt)]])
         ax4.set_xlabel("Time (s)")
         ax4.set_title("Quaternion z")
         ax4.legend(["Estimated", "Ground truth"], loc="lower left")

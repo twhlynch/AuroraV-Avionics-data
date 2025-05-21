@@ -72,8 +72,7 @@ def read_frame(data_bytes):
 
 def read_data(filepath: str) -> tuple[DataFrame, DataFrame]:
     LOWRES_HEADER = ["press", "temp", "time"]
-    HIGHRES_HEADER = ["acc_x", "acc_y", "acc_z", "gyro_x", "gyro_y", "gyro_z", "vel_x", "vel_y", "vel_z", "time"]
-
+    HIGHRES_HEADER = ["acc_x", "acc_y", "acc_z", "gyro_x", "gyro_y", "gyro_z", "time"]
 
     lowres_data = []
     highres_data = []
@@ -83,9 +82,6 @@ def read_data(filepath: str) -> tuple[DataFrame, DataFrame]:
     }
     highres_caluculated_data = {
         'time': 0.0,
-        'vel_x': 0.0,
-        'vel_y': 0.0,
-        'vel_z': 0.0,
     }
 
     with open(filepath, "rb") as file:
@@ -97,9 +93,6 @@ def read_data(filepath: str) -> tuple[DataFrame, DataFrame]:
         if frame is not None:
 
             if frame['frame_id'] == 'highres':
-                highres_caluculated_data["vel_x"] += frame['acc_x']
-                highres_caluculated_data["vel_y"] += frame['acc_y']
-                highres_caluculated_data["vel_z"] += frame['acc_z']
                 
                 frame_data = [
                     frame['acc_x'],
@@ -108,9 +101,6 @@ def read_data(filepath: str) -> tuple[DataFrame, DataFrame]:
                     frame['gyro_x'],
                     frame['gyro_y'],
                     frame['gyro_z'],
-                    highres_caluculated_data["vel_x"],
-                    highres_caluculated_data["vel_y"],
-                    highres_caluculated_data["vel_z"],
                     highres_caluculated_data["time"]
                 ]
 

@@ -81,3 +81,26 @@ def parse_data(data: list, args: dict):
     
     data[1]["tilt"] = tilt[1:]
     data[1]["tilt_cos"] = tilt_cosine[1:]
+
+
+    # MARK: velocity
+    cosines = data[1]["tilt_cos"]
+    accel_x = data[1]["acc_x"]
+
+    mGtoLSB = 31 / 1000   # mG/LSB (converted to g)
+    dt = 1/HIGHRES_HZ     # Time step (seconds)
+
+    # Extract and scale accelerometer data
+    accel_data = [x * mGtoLSB * GRAVITY for x in accel_x]
+    velocity = []
+    vel = 0
+
+    # Perform numerical integration to calculate x-axis velocity
+    for i in range(len(accel_x)):
+        if i >= 11.57/0.004:
+            vel += (accel_data[i] * cosines[i]) * 3.28 * dt
+        else:
+            vel += (accel_data[i] * cosines[i] - GRAVITY) * 3.28 * dt
+        velocity.append(vel)
+        
+    data[1]["vel_x"] = velocity
