@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 from math import acos, cos, pi
 
-from .lib.math import Quaternion, Vector3
+from .lib.math import Quaternion, Vector3, GRAVITY
+from .read_data import HIGHRES_HZ
 
 
 def parse_data(data: list, args: dict):
@@ -45,8 +46,7 @@ def parse_data(data: list, args: dict):
     ]
 
     # estimates
-    freq = int(args['freq'].split(':')[0])
-    dt = 1/freq
+    dt = 1/HIGHRES_HZ
     quats = list(map(Quaternion.as_array, calculate_quat(gyro, dt)))
     
     df_quats = pd.DataFrame(quats, columns=["x", "y", "z", "w"])

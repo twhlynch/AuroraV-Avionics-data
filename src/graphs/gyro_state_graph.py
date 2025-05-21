@@ -2,6 +2,7 @@ import matplotlib.gridspec as gridspec
 
 from ..lib.math import Quaternion, Vector3
 from ..graph_tab import GraphTab
+from ..read_data import HIGHRES_HZ
 
 
 class GyroStateGraph(GraphTab):
@@ -11,8 +12,8 @@ class GyroStateGraph(GraphTab):
     def graph(self):
         data_br = self.data[1]
 
-        data_count = len(data_br['gyro_x'])
-        dt = 0.002
+        data_count = len(data['gyro_x'])
+        dt = 1 / HIGHRES_HZ
 
         gyro_br = [
             [x for x in data_br['gyro_x']],

@@ -21,7 +21,10 @@
 import sys
 from pandas import DataFrame
 
-sens = {
+LOWRES_HZ = 50
+HIGHRES_HZ = 500
+
+SENSITIVITY = {
     'acc': 1 / 2048,
     'gyro': 0.00875,
     'press': 1 / 64, # FIXME: something wrong
@@ -46,13 +49,13 @@ def read_frame(data_bytes):
             'frame_id': 'highres',
             'frame_length': frame_length,
 
-            'acc_x': int.from_bytes(frame_data[0:2], byteorder='big', signed=True) * sens["acc"],
-            'acc_y': int.from_bytes(frame_data[2:4], byteorder='big', signed=True) * sens["acc"],
-            'acc_z': int.from_bytes(frame_data[4:6], byteorder='big', signed=True) * sens["acc"],
+            'acc_x': int.from_bytes(frame_data[0:2], byteorder='big', signed=True) * SENSITIVITY["acc"],
+            'acc_y': int.from_bytes(frame_data[2:4], byteorder='big', signed=True) * SENSITIVITY["acc"],
+            'acc_z': int.from_bytes(frame_data[4:6], byteorder='big', signed=True) * SENSITIVITY["acc"],
 
-            'gyro_x': int.from_bytes(frame_data[6:8], byteorder='big', signed=True) * sens["gyro"],
-            'gyro_y': int.from_bytes(frame_data[8:10], byteorder='big', signed=True) * sens["gyro"],
-            'gyro_z': int.from_bytes(frame_data[10:12], byteorder='big', signed=True) * sens["gyro"],
+            'gyro_x': int.from_bytes(frame_data[6:8], byteorder='big', signed=True) * SENSITIVITY["gyro"],
+            'gyro_y': int.from_bytes(frame_data[8:10], byteorder='big', signed=True) * SENSITIVITY["gyro"],
+            'gyro_z': int.from_bytes(frame_data[10:12], byteorder='big', signed=True) * SENSITIVITY["gyro"],
         }
 
     elif frame_header == LOWRES_ID:
@@ -62,8 +65,8 @@ def read_frame(data_bytes):
         return {
             'frame_id': 'lowres',
             'frame_length': frame_length,
-            'press': int.from_bytes(frame_data[0:3], byteorder='big', signed=True) * sens["press"],
-            'temp': int.from_bytes(frame_data[3:6], byteorder='big', signed=True) * sens["temp"]
+            'press': int.from_bytes(frame_data[0:3], byteorder='big', signed=True) * SENSITIVITY["press"],
+            'temp': int.from_bytes(frame_data[3:6], byteorder='big', signed=True) * SENSITIVITY["temp"]
         }
 
 
@@ -71,8 +74,6 @@ def read_data(filepath: str) -> tuple[DataFrame, DataFrame]:
     LOWRES_HEADER = ["press", "temp", "time"]
     HIGHRES_HEADER = ["acc_x", "acc_y", "acc_z", "gyro_x", "gyro_y", "gyro_z", "vel_x", "vel_y", "vel_z", "time"]
 
-    LOWRES_HZ = 50
-    HIGHRES_HZ = 500
 
     lowres_data = []
     highres_data = []

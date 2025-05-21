@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.gridspec as gridspec
 
 from ..graph_tab import GraphTab
-
+from ..read_data import HIGHRES_HZ
 
 class GyroGraph(GraphTab):
     def setup(self):
@@ -14,7 +14,7 @@ class GyroGraph(GraphTab):
         sensitivity = 13.375  # LSB/degree
 
         total_time = 50
-        dt = 0.004  # Time step (seconds)
+        dt = 1/HIGHRES_HZ  # Time step (seconds)
 
         t = [dt*x for x in range(int(total_time / dt))]
 

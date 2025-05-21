@@ -1,5 +1,6 @@
 from ..lib.math import Quaternion
 from ..graph_tab import GraphTab
+from ..read_data import HIGHRES_HZ
 
 
 class RotationGraph(GraphTab):
@@ -33,8 +34,7 @@ class RotationGraph(GraphTab):
         # Visualise estimates
         # -----------------------------------------------------------
         start, duration = time_range
-        freq = int(self.args['freq'].split(':')[0])
-        dt = 1/freq
+        dt = 1/HIGHRES_HZ
 
         quats = list(zip(
             data["quat_x"],

@@ -98,7 +98,6 @@ def main():
 			# rotation
 			"axis": "xyz[1,1,1]",
 			"time": "0:-1",
-			"freq": "1:1",
 		}
 
 	if args['csv']:

@@ -3,7 +3,8 @@ from sklearn.metrics import root_mean_squared_error
 import numpy as np
 
 from ..graph_tab import GraphTab
-
+from ..lib.math import GRAVITY
+from ..read_data import HIGHRES_HZ
 
 class KalmanGraph(GraphTab):
     def setup(self):
