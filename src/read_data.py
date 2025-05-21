@@ -127,9 +127,17 @@ def read_data(filepath: str) -> tuple[DataFrame, DataFrame]:
 
     return lowres_csv, highres_csv
 
-
-if __name__ == "__main__":
-    filename = sys.argv[1]
+def main(filename: str):
+    """ Read data and write to CSV files """
     lowres, highres = read_data(filename)
+
     lowres.to_csv(f"{filename}_lowres.csv")
     highres.to_csv(f"{filename}_highres.csv")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python read_data.py <filename>")
+        sys.exit(1)
+
+    filename = sys.argv[1]
+    main(filename)

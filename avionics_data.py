@@ -17,7 +17,7 @@ from src.graphs.kalman_graph import KalmanGraph
 from src.graphs.attitude_graph import AttitudeGraph
 from src.graphs.raw_graph import RawGraph
 from src.parse_data import parse_data
-from src.read_data import read_data
+from src.read_data import read_data, main as read_write_data
 
 def get_data(args: dict):
 	"""
@@ -40,13 +40,7 @@ def get_data(args: dict):
 
 # CLI
 def generate(args):
-    data = get_data(args)
-
-    output_dir = './csv_data'
-    os.makedirs(output_dir, exist_ok=True)
-
-    data[0].to_csv(os.path.join(output_dir, "data_lowres.csv"), index=False)
-    data[1].to_csv(os.path.join(output_dir, "data_highres.csv"), index=False)
+    read_write_data(args["data"])
 
 # UI
 class App(tk.Tk):
@@ -83,22 +77,21 @@ def visualise(args: dict):
 
 
 def main():
-	if False: # currently using test input
-		parser = argparse.ArgumentParser(description="Avionics Data Visualisation and CSV Generation")
-		parser.add_argument('--csv', action='store_true',
-			help="Generate CSV files from data")
-		parser.add_argument('data', type=str,
-			help='Path to the binary file to extract data from')
-		args = vars(parser.parse_args())
-	else:
-		args = {
-			"csv": False,
-			"data": "bin_data/20250504_AV",
+	parser = argparse.ArgumentParser(description="Avionics Data Visualisation and CSV Generation")
+	parser.add_argument('--csv', action='store_true',
+		help="Generate CSV files from data")
+	parser.add_argument('data', type=str,
+		help='Path to the binary file to extract data from')
+	args = vars(parser.parse_args())
 
-			# rotation
-			"axis": "xyz[1,1,1]",
-			"time": "0:-1",
-		}
+	args = {
+		"csv": args["csv"],
+		"data": args["data"],
+
+		# these two are hardcoded for now
+		"axis": "xyz[1,1,1]",
+		"time": "0:-1",
+	}
 
 	if args['csv']:
 		generate(args)
