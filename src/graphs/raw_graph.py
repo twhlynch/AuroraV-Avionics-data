@@ -38,11 +38,11 @@ class RawGraph(GraphTab):
 
         ax3.plot(lowres['time'], lowres["press"])
         ax3.set_xlabel('Time (s)')
-        ax3.set_ylabel('Pressure')
+        ax3.set_ylabel('Pressure (kPa)')
 
         ax4.plot(lowres['time'], lowres["temp"])
         ax4.set_xlabel('Time (s)')
-        ax4.set_ylabel('Temperature')
+        ax4.set_ylabel('Temperature (°C)')
 
         self.fig.tight_layout()
         self.fig.canvas.draw_idle()

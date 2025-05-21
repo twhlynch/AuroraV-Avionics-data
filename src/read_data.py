@@ -27,7 +27,7 @@ HIGHRES_HZ = 500
 SENSITIVITY = {
     'acc': 1 / 2048,
     'gyro': 0.00875,
-    'press': 1 / 64, # FIXME: something wrong
+    'press': 1 / 2**16, # FIXME: something wrong (was 1 / 64)
     'temp': 1 / 2**16,
 }
 
@@ -65,8 +65,8 @@ def read_frame(data_bytes):
         return {
             'frame_id': 'lowres',
             'frame_length': frame_length,
-            'press': int.from_bytes(frame_data[0:3], byteorder='big', signed=True) * SENSITIVITY["press"],
-            'temp': int.from_bytes(frame_data[3:6], byteorder='big', signed=True) * SENSITIVITY["temp"]
+            'temp': int.from_bytes(frame_data[0:3], byteorder='big', signed=True) * SENSITIVITY["temp"],
+            'press': int.from_bytes(frame_data[3:6], byteorder='big', signed=True) * SENSITIVITY["press"],
         }
 
 
