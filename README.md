@@ -1,6 +1,4 @@
-# Avionics Data Visualisation
-
-Something something data blah
+# Avionics Data Decoding & Visualisation
 
 # Setup
 
@@ -55,3 +53,5 @@ Generate the CSV on the command line or with a script.
 ```bash
 python avionics_data.py --csv
 ```
+
+> Or use the binary conversion script directly: `python src/read_data.py example.bin`
