@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.gridspec as gridspec
 
 from ..graph_tab import GraphTab
-from ..read_data import HIGHRES_HZ
 
 class GyroGraph(GraphTab):
     def setup(self):
@@ -13,10 +12,7 @@ class GyroGraph(GraphTab):
 
         sensitivity = 13.375  # LSB/degree
 
-        total_time = 50
-        dt = 1/HIGHRES_HZ  # Time step (seconds)
-
-        t = [dt*x for x in range(int(total_time / dt))]
+        t = df['time']
 
         # Extract and scale sensor data
         gyro = np.array([
@@ -35,17 +31,17 @@ class GyroGraph(GraphTab):
         ax2 = self.fig.add_subplot(gs[1, 0])
         ax3 = self.fig.add_subplot(gs[1, 1])
 
-        ax1.plot(t, gyro[0:int(total_time / dt), 0], label="A1 Avionics")
+        ax1.plot(t, gyro[:, 0], label="A1 Avionics")
         ax1.set_xlabel('Time (s)')
         ax1.set_ylabel('X-axis rotational velocity (m/s)')
         ax1.legend()
 
-        ax2.plot(t, gyro[0:int(total_time / dt), 1])
+        ax2.plot(t, gyro[:, 1])
         ax2.set_xlabel('Time (s)')
         ax2.set_ylabel('Y-axis rotational velocity (m/s)')
         ax2.legend(["A1 Avionics"])
 
-        ax3.plot(t, gyro[0:int(total_time / dt), 2])
+        ax3.plot(t, gyro[:, 2])
         ax3.set_xlabel('Time (s)')
         ax3.set_ylabel('Z-axis rotational velocity (m/s)')
         ax3.legend(["A1 Avionics"])

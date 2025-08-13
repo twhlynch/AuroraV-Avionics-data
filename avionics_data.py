@@ -62,7 +62,7 @@ class App(tk.Tk):
 			GyroGraph(self.notebook, data, args),
 			GyroStateGraph(self.notebook, data, args),
 			RotationGraph(self.notebook, data, args),
-			KalmanGraph(self.notebook, data, args),
+            # KalmanGraph(self.notebook, data, args), # TODO: stop this crashing
 			AttitudeGraph(self.notebook, data, args, data_source='AV'),
 			AttitudeGraph(self.notebook, data, args, data_source='BR'),
 		]

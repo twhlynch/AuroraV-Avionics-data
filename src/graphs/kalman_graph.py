@@ -29,7 +29,7 @@ class KalmanGraph(GraphTab):
         cosines = data["tilt_cos"]
 
         baro = [x for x in data_l["press"]]
-        baro = np.repeat(baro[100:], 5)
+        # baro = np.repeat(baro[100:], 5)
 
         vel = list(np.repeat(data["vel_x"], 5)[0:data_count])
 
